@@ -12,9 +12,9 @@ config = {
     "prompts": [
         "explain this function",
         "decompile to python",
+        "explain all variables",
         "is this vulnerable?, if so, explain or write exploit in python",
-        "is this function safe?",
-        "any questions to understand this function more?",
+        "any unknowns in this function?",
         "next to do based on this code?",
     ],
     "model": "text-davinci-003"
