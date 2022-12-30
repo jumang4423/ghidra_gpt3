@@ -27,6 +27,10 @@ from ghidra.app.decompiler import DecompInterface
 import urllib2
 import json
 
+def error(while_str, err_str):
+    askString("error while " + while_str, "because", err_str)
+    panic()
+
 # user prompt input
 prompt_choice = askChoice("Prompt", "choose prompt", config["prompts"], config["prompts"][0] )
 
@@ -38,8 +42,11 @@ try:
     selected_fun_name = getFunctionContaining(currentLocation.getAddress())
     c_code = decObj.decompileFunction(selected_fun_name, 30, TaskMonitor.DUMMY).getDecompiledFunction().getC()
 except Exception as e:
-    askString("error while decompiling", "because", str(e))
-    panic()
+    error("decompiling", str(e))
+
+# decompile validation
+if len(c_code) == 0:
+    error("decompiling", "decompiler returned empty string")
 
 print("function " + str(selected_fun_name) + " decompiled to c.")
 
@@ -62,7 +69,6 @@ try:
     # print
     popup(res_text)
 except Exception as e:
-    askString("error while asking to gpt3", "because", str(e))
-    panic()
+    error("requesting 2 gpt3", str(e))
 
 print("done")
