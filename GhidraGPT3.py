@@ -17,7 +17,9 @@ config = {
         "any unknowns in this function?",
         "next to do based on this code?",
     ],
-    "model": "text-davinci-003"
+    "model": "text-davinci-003",
+    "max_tokens": 2048,
+    "temperature": 0.9,
 }
 
 # decompiler
@@ -56,8 +58,9 @@ prompt += prompt_choice + "\r\n"
 prompt += c_code
 dataObj = {
     "prompt": prompt,
-    "max_tokens": 2048,
-    "model": config["model"]
+    "model": config["model"],
+    "max_tokens": config["max_tokens"],
+    "temperature": config["temperature"],
 }
 print("request started...")
 
