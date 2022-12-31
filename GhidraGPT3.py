@@ -17,6 +17,7 @@ config = {
         "any unknowns in this function?",
         "next to do based on this code?",
     ],
+    "add_comment": True,
     "model": "text-davinci-003",
     "max_tokens": 2048,
     "temperature": 0.9,
@@ -32,6 +33,11 @@ import json
 def error(while_str, err_str):
     askString("error while " + while_str, "because", err_str)
     panic()
+
+# cut string by 40 then return \r separated string
+def cut_str_into_arr_str(prompt_str):
+    div_by = 40
+    return "\n".join([prompt_str[i:i+div_by] for i in range(0, len(prompt_str), div_by)])
 
 # user prompt input
 prompt_choice = askChoice("Prompt", "choose prompt", config["prompts"], config["prompts"][0] )
@@ -75,3 +81,11 @@ except Exception as e:
     error("requesting 2 gpt3", str(e))
 
 print("done")
+
+# add comment to the function with res_text
+if config["add_comment"]:
+    try:
+        comment = "GPT3 answer:\r" + cut_str_into_arr_str(res_text)
+        selected_fun_name.setComment(comment)
+    except Exception as e:
+        error("adding comment", str(e))
