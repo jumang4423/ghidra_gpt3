@@ -18,9 +18,8 @@ config = {
         "next to do based on this code?",
     ],
     "add_comment": True,
-    "model": "text-davinci-003",
-    "max_tokens": 2048,
-    "temperature": 0.9,
+    "max_tokens": 4096,
+    "temperature": 0.5,
 }
 
 # decompiler
@@ -29,6 +28,8 @@ from ghidra.app.decompiler import DecompInterface
 # for gpt3 api request
 import urllib2
 import json
+
+MODEL_NAME="gpt-3.5-turbo"
 
 def error(while_str, err_str):
     askString("error while " + while_str, "because", err_str)
@@ -59,26 +60,27 @@ if len(c_code) == 0:
 print("function " + str(selected_fun_name) + " decompiled to c.")
 
 # request to gpt3
-prompt = ""
-prompt += prompt_choice + "\r\n"
-prompt += c_code
 dataObj = {
-    "prompt": prompt,
-    "model": config["model"],
+    "messages": [
+        { "role": "system", "you are a reverse engineering bot. based on given c code by user, " + prompt_choice + " and return the answer to user.": "" },
+        { "role": "user", "c_code": cut_str_into_arr_str(c_code) },
+    ],
+    "model": MODEL_NAME,
     "max_tokens": config["max_tokens"],
     "temperature": config["temperature"],
+    "top_p": 1,
 }
 print("request started...")
 
 try:
     dataObj = json.dumps(dataObj)
-    req = urllib2.Request('https://api.openai.com/v1/completions', dataObj, {'Authorization': 'Bearer ' + config["api_key"], 'Content-Type': 'application/json'})
+    req = urllib2.Request('https://api.openai.com/v1/chat/completions', dataObj, {'Authorization': 'Bearer ' + config["api_key"], 'Content-Type': 'application/json'})
     res = urllib2.urlopen(req).read()
-    res_text = json.loads(res)["choices"][0]["text"]
+    res_text = json.loads(res)["choices"][0]["message"]["content"]
     # print
     popup(res_text)
 except Exception as e:
-    error("requesting 2 gpt3", str(e))
+    error("requesting 2 " + MODEL_NAME, str(e))
 
 print("done")
 
