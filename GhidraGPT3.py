@@ -18,7 +18,6 @@ config = {
         "next to do based on this code?",
     ],
     "add_comment": True,
-    "temperature": 0.5,
 }
 
 # decompiler
@@ -61,12 +60,11 @@ print("function " + str(selected_fun_name) + " decompiled to c.")
 # request to gpt3
 dataObj = {
     "messages": [
-        { "role": "system", "you are a reverse engineering bot. based on given c code by user, " + prompt_choice + " and return the answer to user.": "" },
-        { "role": "user", "c_code": cut_str_into_arr_str(c_code) },
+        { "role": "system", "content": "you are a reverse engineering bot. based on given c code by user, " + prompt_choice + " and return the answer to user." },
+        { "role": "user", "content": cut_str_into_arr_str(c_code) },
     ],
     "model": MODEL_NAME,
-    "temperature": config["temperature"],
-    "top_p": 1,
+    "temperature": 0.1,
 }
 print("request started...")
 
@@ -77,6 +75,12 @@ try:
     res_text = json.loads(res)["choices"][0]["message"]["content"]
     # print
     popup(res_text)
+except urllib2.HTTPError as e:
+    res = e.read()
+    try:
+        error("from API", json.loads(res)["error"]["message"])
+    except:
+        error("API error", str(e))
 except Exception as e:
     error("requesting 2 " + MODEL_NAME, str(e))
 
