@@ -18,7 +18,6 @@ config = {
         "next to do based on this code?",
     ],
     "add_comment": True,
-    "max_tokens": 4096,
     "temperature": 0.5,
 }
 
