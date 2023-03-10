@@ -65,7 +65,6 @@ dataObj = {
         { "role": "user", "c_code": cut_str_into_arr_str(c_code) },
     ],
     "model": MODEL_NAME,
-    "max_tokens": config["max_tokens"],
     "temperature": config["temperature"],
     "top_p": 1,
 }
